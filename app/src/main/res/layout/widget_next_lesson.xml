@@ -1,21 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:padding="20dp" android:background="@drawable/widget_bg">
-    <TextView android:id="@+id/label" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="СЛЕДУЮЩИЙ УРОК" android:textColor="#B8B3A0" android:textSize="11sp"
-        android:letterSpacing="0.15" android:textStyle="bold" />
-    <TextView android:id="@+id/time" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" android:text="—" android:textColor="#A3B87A" android:textSize="14sp"
-        android:textStyle="bold" android:background="@drawable/badge_bg"
-        android:paddingLeft="10dp" android:paddingRight="10dp"
-        android:paddingTop="4dp" android:paddingBottom="4dp" />
-    <TextView android:id="@+id/subject" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" android:text="—" android:textColor="#F2E8D5"
-        android:textSize="20sp" android:textStyle="bold" android:maxLines="2" android:ellipsize="end" />
-    <TextView android:id="@+id/room" android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" android:text="" android:textColor="#F2E8D5"
-        android:textSize="13sp" android:textStyle="bold" android:background="@drawable/room_bg"
-        android:paddingLeft="12dp" android:paddingRight="12dp"
-        android:paddingTop="6dp" android:paddingBottom="6dp" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="18dp"
+    android:background="@drawable/widget_bg">
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\u0421\u041B\u0415\u0414\u0423\u042E\u0429\u0418\u0419 \u0423\u0420\u041E\u041A"
+        android:textColor="#9BAAB8"
+        android:textSize="10sp"
+        android:letterSpacing="0.15"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="\u2014"
+        android:textColor="#7EC8E3"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:background="@drawable/badge_bg"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp" />
+
+    <TextView
+        android:id="@+id/subject"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:text="\u2014"
+        android:textColor="#F5EEE0"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:gravity="top|start" />
+
+    <TextView
+        android:id="@+id/room"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text=""
+        android:textColor="#FFB997"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:background="@drawable/room_bg"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp" />
 </LinearLayout>

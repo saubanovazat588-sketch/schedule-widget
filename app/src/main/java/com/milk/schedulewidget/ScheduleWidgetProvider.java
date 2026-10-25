@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.view.View;
 import android.widget.RemoteViews;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,6 +17,16 @@ import java.util.List;
 public class ScheduleWidgetProvider extends AppWidgetProvider {
     private static final String ACTION_UPDATE = "com.milk.schedulewidget.UPDATE";
     private static final long INTERVAL = 60000L;
+
+    private static final String[] WEEKEND_MSGS = {
+        "отдыхай, братишка \uD83C\uDF0A",
+        "время чиллить \u2615",
+        "никаких уроков — кайфуй \uD83C\uDF51",
+        "заслужил отдых \uD83C\uDF1F",
+        "спи, ешь, играй \uD83C\uDFAE",
+        "тишина и покой \uD83C\uDF19",
+        "твой день, делай что хочешь \u2728"
+    };
 
     public static class Lesson {
         public final String start, end, subject, room;
@@ -69,6 +80,22 @@ public class ScheduleWidgetProvider extends AppWidgetProvider {
         return Integer.parseInt(p[0]) * 60 + Integer.parseInt(p[1]);
     }
 
+    private static String formatRoom(String room) {
+        if (room == null || room.isEmpty()) return "";
+        if (room.length() > 1
+                && (room.charAt(0) == '\u043A' || room.charAt(0) == '\u041A')
+                && Character.isDigit(room.charAt(1))) {
+            return "\u041A\u0430\u0431\u0438\u043D\u0435\u0442 " + room.substring(1);
+        }
+        return room;
+    }
+
+    private static String weekendMessage() {
+        Calendar c = Calendar.getInstance();
+        int idx = c.get(Calendar.DAY_OF_YEAR) + c.get(Calendar.MONTH) * 31;
+        return WEEKEND_MSGS[Math.abs(idx) % WEEKEND_MSGS.length];
+    }
+
     @Override public void onEnabled(Context c) { super.onEnabled(c); scheduleAlarm(c); }
     @Override public void onDisabled(Context c) { super.onDisabled(c); cancelAlarm(c); }
 
@@ -90,18 +117,39 @@ public class ScheduleWidgetProvider extends AppWidgetProvider {
         RemoteViews rv = new RemoteViews(c.getPackageName(), R.layout.widget_next_lesson);
         Calendar now = Calendar.getInstance();
         int dow = now.get(Calendar.DAY_OF_WEEK);
+
+        if (dow == Calendar.SATURDAY || dow == Calendar.SUNDAY) {
+            rv.setTextViewText(R.id.label, "\u0412\u042B\u0425\u041E\u0414\u041D\u041E\u0419");
+            rv.setTextViewText(R.id.subject, weekendMessage());
+            rv.setViewVisibility(R.id.time, View.GONE);
+            rv.setViewVisibility(R.id.room, View.GONE);
+            m.updateAppWidget(id, rv);
+            return;
+        }
+
         int nowMin = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE);
-        String label = "СЛЕДУЮЩИЙ УРОК", time = "—", subject = "Нет уроков", room = "";
+        String label = "\u0421\u041B\u0415\u0414\u0423\u042E\u0429\u0418\u0419 \u0423\u0420\u041E\u041A";
+        String time = "\u2014";
+        String subject = "\u041D\u0435\u0442 \u0443\u0440\u043E\u043A\u043E\u0432";
+        String room = "";
         boolean found = false;
         List<Lesson> today = getDay(dow);
         for (Lesson l : today) {
             int s = toMinutes(l.start), e = toMinutes(l.end);
             if (nowMin >= s && nowMin < e) {
-                label = "СЕЙЧАС ИДЁТ"; time = l.start + "–" + l.end;
-                subject = l.subject; room = l.room; found = true; break;
+                label = "\u0421\u0415\u0419\u0427\u0410\u0421 \u0418\u0414\u0401\u0422";
+                time = l.start + "\u2013" + l.end;
+                subject = l.subject;
+                room = l.room;
+                found = true;
+                break;
             }
             if (nowMin < s) {
-                time = l.start + "–" + l.end; subject = l.subject; room = l.room; found = true; break;
+                time = l.start + "\u2013" + l.end;
+                subject = l.subject;
+                room = l.room;
+                found = true;
+                break;
             }
         }
         if (!found) {
@@ -110,14 +158,27 @@ public class ScheduleWidgetProvider extends AppWidgetProvider {
                 List<Lesson> nx = getDay(nd);
                 if (!nx.isEmpty()) {
                     Lesson f = nx.get(0);
-                    time = f.start + "–" + f.end; subject = f.subject; room = f.room; break;
+                    time = f.start + "\u2013" + f.end;
+                    subject = f.subject;
+                    room = f.room;
+                    break;
                 }
             }
         }
+
         rv.setTextViewText(R.id.label, label);
+        rv.setViewVisibility(R.id.time, View.VISIBLE);
         rv.setTextViewText(R.id.time, time);
         rv.setTextViewText(R.id.subject, subject);
-        rv.setTextViewText(R.id.room, room.isEmpty() ? "" : "📍 " + room);
+
+        String roomFormatted = formatRoom(room);
+        if (roomFormatted.isEmpty()) {
+            rv.setViewVisibility(R.id.room, View.GONE);
+        } else {
+            rv.setViewVisibility(R.id.room, View.VISIBLE);
+            rv.setTextViewText(R.id.room, "\uD83D\uDCCD " + roomFormatted);
+        }
+
         m.updateAppWidget(id, rv);
     }
 
